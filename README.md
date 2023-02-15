@@ -1,7 +1,7 @@
 
 # tgc-data-inspector
 
-Flexible tool to inspect, compare, analyze, Telegram exported chat
+Flexible tool to inspect, compare, analyze, Telegram exported chat data
 
 
 ## Run Locally
