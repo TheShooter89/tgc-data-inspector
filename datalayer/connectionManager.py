@@ -9,8 +9,6 @@ class ConnectionManager():
     """docstring for ConnectionManager"""
     _base = DefaultAbstractBase
     _engine = None
-    _session_maker = None
-    _session_factory = None
     _session = None
 
     def __init__(self, base=None, engine=None):
