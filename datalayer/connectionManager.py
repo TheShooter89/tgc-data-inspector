@@ -1,3 +1,4 @@
+import functools
 from typing import Union
 
 from sqlalchemy.orm import Session, scoped_session, sessionmaker, SessionTransaction
@@ -23,7 +24,7 @@ class ConnectionManager():
             print('SCOPED SESSION FACTORY ERROR: no engine found')
             return False
 
-        return scoped_session(sessionmaker(bind=self._engine))
+        return scoped_session(sessionmaker(bind=self._engine, future=True))
 
     def _create_session(self):
         """docstring for _create_session"""
@@ -56,3 +57,17 @@ class ConnectionManager():
             self._engine = engine
 
         self._base.metadata.create_all(bind=self._engine)
+
+    def use_session(self, func):
+        """docstring for use_session"""
+        if not self._session:
+            self._create_session()
+
+        with self._session() as session:
+            with session.begin():
+                @functools.wraps(func)
+                def wrapper(*args, **kwargs):
+                    value = func(session=self._session, *args, **kwargs)
+                    return value
+
+                return wrapper
