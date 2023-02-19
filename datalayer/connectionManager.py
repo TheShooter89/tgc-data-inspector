@@ -1,6 +1,7 @@
 import functools
 from typing import Union
 
+from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, scoped_session, sessionmaker, SessionTransaction
 
 from datalayer.customBase import DefaultAbstractBase
@@ -45,6 +46,14 @@ class ConnectionManager():
         self._session = None
         return True
 
+    def _load_engine(self, engine_string):
+        """docstring for _load_engine"""
+        if self._engine:
+            print('an engine is already in use, returning self._engine')
+            return self._engine
+        self._engine = create_engine(engine_string)
+        return self._engine
+
     def init(self, base=None, engine=None):
         """docstring for init"""
         if not engine and not self._engine:
@@ -56,6 +65,7 @@ class ConnectionManager():
         if engine:
             self._engine = engine
 
+        self._load_engine('default')
         self._base.metadata.create_all(bind=self._engine)
 
     def use_session(self, func):
